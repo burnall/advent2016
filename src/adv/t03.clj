@@ -1,10 +1,6 @@
 (ns adv.t03
   (:require [adv.util :refer [split split-lines parse-int]]))
 
-(defn parse-cmd [cmd] 
-  {:turn (keyword (subs cmd 0 1))
-   :distance (parse-int (subs cmd 1))})
-
 (defn get-sides [line]
   (->> (split line #" +")
        (drop 1)
