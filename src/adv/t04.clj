@@ -36,3 +36,24 @@
          (reduce +)))
   ([] (solve input)))
 
+; Part 2
+(defn rotate [n ch]
+  (if (= ch \-) 
+    \s
+    (char (+ (int \a) 
+             (mod (+ n (int ch) (- (int \a))) 26)))))
+
+(defn decrypt [n s]
+  (->> s
+       (map (partial rotate n))
+       (apply str)))
+
+(defn solve2
+  ([rooms] 
+    (->> rooms
+         (map (fn [{:keys [encr-name sector-id] :as room}] 
+                (assoc room :name (decrypt sector-id encr-name))))
+         (filter (fn [{nm :name}] (clojure.string/includes? nm "north")))       
+         ))
+  ([] (solve2 input)))
+
