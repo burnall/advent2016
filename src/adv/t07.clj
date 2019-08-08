@@ -21,7 +21,23 @@
 (defn solve
   ([lines] 
     (->> lines
-         (filter fit?)
+         (filter fit2?)
          (count)))
   ([] (solve input)))
+
+; Part 2
+(defn aba [s]
+  (->> s
+       (re-seq #"(?=(.)(.)\1)")
+       (filter (fn [[_ a b]] (not= a b)))
+       (map rest)))
+
+(defn fit2? [s]
+  (let [xs (split s #"\[|\]")
+        aba-s (mapcat aba (take-nth 2 xs))
+        bab-s (mapcat aba (take-nth 2 (rest xs)))]
+    (not (empty? (clojure.set/intersection (set aba-s)   
+                                           (set (map reverse bab-s)))))))
+
+  
 
