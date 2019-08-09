@@ -48,14 +48,25 @@
 (defn zero-matrix [row-count col-count]
   (vec (repeat row-count 
                (vec (repeat col-count 0)))))
-    
+   
+
+(defn get-image-line [line]
+  (->> line
+       (map #(if (zero? %) \. \#))
+       (apply str)))
+
+(defn get-image [screen]
+  (map get-image-line screen)) 
+
 (defn solve 
   ([commands row-count col-count]
     (->> commands
          (reduce apply-cmd
                  (zero-matrix row-count col-count))
-         (mapcat identity)
-         (reduce +)))
+         (get-image)
+         (map prn)))
+         ;(mapcat identity)
+         ;(reduce +)))
   ([] (solve input 6 50)))
 
           
