@@ -38,3 +38,33 @@
          (+ (count s))))
 
   ([] (solve input)))
+
+
+; Part 2
+(defn process [s markers start end q acc]
+  (let [marker (first markers)]
+    (if (and marker (< (:start marker) end))
+      (let [[v rest-markers] (process s 
+                                      (rest markers) 
+                                      (:end marker) 
+                                      (+ (:end marker) (:a marker))
+                                      (* q (:b markers))
+                                      0)]
+        (recur s 
+               rest-markers
+               (:end marker)
+              :end
+               q
+               (+ acc v)))
+      [(* q (+ acc (- end start))) markers]))) 
+ 
+ (defn solve2 
+   ([s] (->> (process s 
+                      (get-markers s) 
+                      0 
+                      (count s)
+                      1
+                      0)
+             (first)))         
+   ([] (solve2 input)))
+
