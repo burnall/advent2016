@@ -69,6 +69,3 @@
          ;(reduce +)))
   ([] (solve input 6 50)))
 
-          
-          
-

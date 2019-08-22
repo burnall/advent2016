@@ -44,19 +44,20 @@
 (defn process [s markers start end q acc]
   (let [marker (first markers)]
     (if (and marker (< (:start marker) end))
-      (let [[v rest-markers] (process s 
+      (let [before (- (:start marker) start)
+            [v rest-markers] (process s 
                                       (rest markers) 
                                       (:end marker) 
                                       (+ (:end marker) (:a marker))
-                                      (* q (:b markers))
+                                      (* q (:b marker))
                                       0)]
         (recur s 
                rest-markers
-               (:end marker)
-              :end
+               (+ (:end marker) (:a marker))
+               end
                q
-               (+ acc v)))
-      [(* q (+ acc (- end start))) markers]))) 
+               (+ before acc v)))
+      [(+ acc (* q (- end start))) markers]))) 
  
  (defn solve2 
    ([s] (->> (process s 
