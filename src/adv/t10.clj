@@ -50,13 +50,38 @@
        ((fn [[bots visited-bots]]
          [bots (get-complete-bots visited-bots)]))))
 
+(defn build [cmds]
+  (let [transitions (get-transitions cmds)
+        bots (get-initial-bots cmds)
+        active-bots (get-complete-bots bots)]
+    (->> [bots active-bots]
+         (iterate (partial play transitions))
+         (some (fn [[bots active-bots]] (when (empty? active-bots) bots))))))
+ 
+
 (defn solve 
   ([cmds v1 v2]
-    (let [transitions (get-transitions cmds)
-          bots (get-initial-bots cmds)
-          active-bots (get-complete-bots bots)]
-      (->> [bots active-bots]
-           (iterate (partial play transitions))
-           (some (fn [[bots active-bots]] (when (empty? active-bots) bots)))
-           (filter (fn [[id bot]] (= (sort bot) (sort [v1 v2])))))))
+    (->> cmds
+         (build)  
+         (filter (fn [[id bot]] (= (sort bot) (sort [v1 v2]))))))
   ([] (solve input 61 17)))
+
+; Part 2
+
+(defn find-output [transitions id]
+  (some (fn [[from {:keys [low-type low-id high-type high-id]}]]
+           (cond
+             (and (= low-type :output) (= low-id id)) [from min]
+             (and (= high-type :output) (= high-id id)) [from max]))
+        transitions))
+
+(defn solve2 []
+  (let [transitions (get-transitions input)
+        sol (build input)
+        get-value (fn [[id f]] (apply f (sort (get sol id))))]
+    (->> 3
+         (range)
+         (map (partial find-output transitions))
+         (map (partial get-value))
+         (reduce * 1))))
+  
