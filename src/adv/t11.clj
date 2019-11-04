@@ -1,36 +1,46 @@
 (ns adv.t11)
 
-(def input {
-  :elev 0,
-  :plan [[{:dev :gen, :el :th} {:dev :chip, :el :th}, {:dev :gen, :el :pl}, {:dev :gen, :el :sr}]
-         [{:dev :chip, :el :pl}, {:dev :chip, :el :sr}]
-         [{:dev :gen, :el :pt}, {:dev :chip, :el :pt}, {:dev :gen, :el :rt}, {:dev :chip, :el :rt}]
-         []]})
+(def devices [
+  {:dev :gen, :el :th, :id 0} 
+  {:dev :chip, :el :th, :id 1} 
+  {:dev :gen, :el :pl, :id 2} 
+  {:dev :gen, :el :sr, :id 3}
+  {:dev :chip, :el :pl, :id 4}
+  {:dev :chip, :el :sr, :id 5}
+  {:dev :gen, :el :pt, :id 6}
+  {:dev :chip, :el :pt, :id 7}
+  {:dev :gen, :el :rt, :id 8}
+  {:dev :chip, :el :rt, :id 9}])
 
-(defn all-obj-top? [plan]
-  (->> plan
-       (count)
-       (dec)
-       (subvec plan 0)
-       (every? empty?)))
+(def starting-node {
+  :floor 0
+  :plan {0 0, 1 0, 2 0, 3 0
+         4 1, 5 1
+         6 2, 7 2, 8 2, 9 2}
+  :moves []})
 
-(defn good? [objs]
-  (->> objs
-       (reduce (fn [[gens chips ] {:keys [dev el]}]
-                 (if (= dev :gen) 
-                   [(conj gens el) chips]
-                   [gens (conj chips el)]))
-               [#{} #{}])
-       ((fn [[gens chips]] 
-         (or (zero? (count gens))
-             (empty? (clojure.set/difference chips gens)))))))
+(defn all-top? [node]
+  (->> node
+       :plan
+       (every? (fn [[_ location]] (= 3 location)))))
 
-(defn get-pairs [n]
-  (->> n
-       (range)
-       (map (fn [i] [i n]))))
+; returns node reachable from the node
+; find devices on the floor
+; get all 1-2 combinations
+; check them
+; check remaining on the floor
+; get node up or down
+(defn next-nodes [node]
+  )
 
-(defn get-selections [n]
-  (->> n
-       (range)
-       (mapcat get-pairs)))
+(defn breadth-first-search [nodes]
+  (let [
+    visit (fn [agg node]
+            (if (all-top? node)
+              (reduced node)
+              (conj agg (next-nodes node))))
+    result (reduce visit [] nodes)]
+    (if (map? result)
+      result
+      (recur result))))
+
