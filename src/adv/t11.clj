@@ -24,7 +24,7 @@
        :plan
        (every? (fn [[_ location]] (= 3 location)))))
 
-; returns node reachable from the node
+; returns node reachable from the node:
 ; find devices on the floor
 ; get all 1-2 combinations
 ; check them
